@@ -1,0 +1,37 @@
+.new-board-form-container {
+    margin: 1rem 0;
+}
+
+.new-board-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.new-board-form label {
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+}
+
+.new-board-form input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.new-board-form button {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background-color: #2185d0;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.error {
+    color: red;
+    font-size: 0.9rem;
+}

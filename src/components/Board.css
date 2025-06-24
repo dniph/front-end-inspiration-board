@@ -1,0 +1,13 @@
+/* src/components/Board.css */
+.board {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.board:hover {
+    background-color: #f9f9f9;
+}

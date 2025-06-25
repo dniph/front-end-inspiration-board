@@ -13,39 +13,16 @@ function App() {
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [cards, setCards] = useState([]);
 
+
   useEffect(() => {
-  // Just for testing porposes
-  const fakeBoards = [
-    { board_id: 1, title: "The smallest and hottest moon", owner: "Lulu Games" },
-    { board_id: 2, title: "The freeman", owner: "Varto Devs" },
-  ];
-
-  setBoardsData(fakeBoards);
-}, []);
-
-  // useEffect(() => {
-  //   getBoards()
-  //     .then((response) => {
-  //       setBoardsData(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching boards:", error);
-  //     });
-  // }, []);
-
-
-useEffect(() => {
-  if (selectedBoard) {
-    // fake data
-    const fakeCards = [
-      { card_id: 1, message: "You are amazing!", likes_count: 5 },
-      { card_id: 2, message: "Stay curious.", likes_count: 2 },
-      { card_id: 3, message: "Believe in yourself.", likes_count: 7 }
-    ];
-
-    setCards(fakeCards); // get fake data into setCards
-  }
-}, [selectedBoard]);
+    getBoards()
+      .then((response) => {
+        setBoardsData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching boards:", error);
+      });
+  }, []);
 
 
   // useEffect(() => {
@@ -60,6 +37,24 @@ useEffect(() => {
   //   }
   // }, [selectedBoard]);
 
+  useEffect(() => {
+    if (!selectedBoard) return;
+
+    getCardsByBoardId(selectedBoard.board_id)
+      .then((response) => {
+        const mappedCards = response.data.map((card) => ({
+          card_id: card.id,
+          message: card.card_message,
+          likes_count: card.likes,
+          board_id: card.board_id,
+        }));
+        setCards(mappedCards);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch cards:", error);
+      });
+  }, [selectedBoard]);
+
   const createNewBoard = (newBoardData) => {
     createBoard(newBoardData)
       .then((response) => {
@@ -70,15 +65,6 @@ useEffect(() => {
       });
   }
 
-    const createNewCard = (newCardData) => {
-      const fakeNewCard = {
-        card_id: cards.length + 1,
-        message: newCardData.message,
-        likes_count: 0,
-      };
-
-      setCards([...cards, fakeNewCard]);
-  };
   
   // const createNewCard = (newCardData) => {
   //   if (!selectedBoard) return;
@@ -92,6 +78,26 @@ useEffect(() => {
   //       console.error("Failed to create card:", error);
   //     });
   // };
+
+  const createNewCard = (newCardData) => {
+    if (!selectedBoard) return;
+
+    createCard(selectedBoard.board_id, newCardData)
+      .then((response) => {
+        const cardFromServer = response.data;
+        const mappedCard = {
+          card_id: cardFromServer.id,
+          message: cardFromServer.card_message,
+          likes_count: cardFromServer.likes,
+          board_id: cardFromServer.board_id,
+        };
+
+        setCards([...cards, mappedCard]);
+      })
+      .catch((error) => {
+        console.error("Failed to create card:", error);
+      });
+  };
 
   return (
     <div className="App">
@@ -111,8 +117,7 @@ useEffect(() => {
         <div className="selected-board">
           <h2>Selected Board</h2>
           <p>
-            <strong>{selectedBoard.title}</strong> by{" "}
-            <em>{selectedBoard.owner}</em>
+            <strong>{selectedBoard.title}</strong> by <em>{selectedBoard.owner}</em>
           </p>
         </div>
       )}

@@ -5,3 +5,8 @@ const BASE_URL = "http://localhost:5000";
 export const getCardsByBoardId = (boardId) => {
   return axios.get(`${BASE_URL}/boards/${boardId}/cards`);
 };
+
+
+export const createCard = (boardId, cardData) => {
+  return axios.post(`http://localhost:5000/boards/${boardId}/cards`, cardData);
+};

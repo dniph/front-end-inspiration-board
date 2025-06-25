@@ -5,7 +5,8 @@ import Board from "./components/Board";
 import "./App.css";
 import NewBoardForm from "./components/NewBoardForm";
 import CardList from "./components/CardList";
-import {getCardsByBoardId} from "./services/cardApi.js";
+import { createCard, getCardsByBoardId } from "./services/cardApi.js";
+import NewCardForm from "./components/NewCardForm";
 
 function App() {
   const [boardsData, setBoardsData] = useState([]);
@@ -69,6 +70,29 @@ useEffect(() => {
       });
   }
 
+    const createNewCard = (newCardData) => {
+      const fakeNewCard = {
+        card_id: cards.length + 1,
+        message: newCardData.message,
+        likes_count: 0,
+      };
+
+      setCards([...cards, fakeNewCard]);
+  };
+  
+  // const createNewCard = (newCardData) => {
+  //   if (!selectedBoard) return;
+
+  //   createCard(selectedBoard.board_id, newCardData)
+  //     .then((response) => {
+
+  //       setCards([...cards, response.data]);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Failed to create card:", error);
+  //     });
+  // };
+
   return (
     <div className="App">
       <h1>Inspiration Board</h1>
@@ -92,15 +116,21 @@ useEffect(() => {
           </p>
         </div>
       )}
+
       {selectedBoard && (
-        <CardList
-          cards={cards}
-          onDelete={(id) => console.log("delete", id)}
-          onLike={(id) => console.log("like", id)}
-        />
+        <>
+          <NewCardForm createNewCard={createNewCard} />
+          <CardList
+            cards={cards}
+            onDelete={(id) => console.log("delete", id)}
+            onLike={(id) => console.log("like", id)}
+          />
+        </>
       )}
     </div>
   );
 }
 
 export default App;
+
+

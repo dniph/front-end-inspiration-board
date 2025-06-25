@@ -7,6 +7,7 @@ import NewBoardForm from "./components/NewBoardForm";
 import CardList from "./components/CardList";
 import { createCard, getCardsByBoardId } from "./services/cardApi.js";
 import NewCardForm from "./components/NewCardForm";
+import { deleteCard } from "./services/cardApi";
 
 function App() {
   const [boardsData, setBoardsData] = useState([]);
@@ -65,6 +66,8 @@ function App() {
       });
   }
 
+
+
   
   // const createNewCard = (newCardData) => {
   //   if (!selectedBoard) return;
@@ -99,9 +102,21 @@ function App() {
       });
   };
 
+  const handleDeleteCard = (cardId) => {
+  deleteCard(cardId)
+    .then(() => {
+      // Filtra la tarjeta eliminada del estado
+      const updatedCards = cards.filter((card) => card.card_id !== cardId);
+      setCards(updatedCards);
+    })
+    .catch((error) => {
+      console.error("Error deleting card:", error);
+    });
+};
+  
   return (
     <div className="App">
-      <h1>Inspiration Board</h1>
+      <h1>The Debugging Trashcats Board</h1>
       <NewBoardForm createNewBoard={createNewBoard} />
 
       <h2>Boards</h2>
@@ -127,7 +142,7 @@ function App() {
           <NewCardForm createNewCard={createNewCard} />
           <CardList
             cards={cards}
-            onDelete={(id) => console.log("delete", id)}
+            onDelete={handleDeleteCard}
             onLike={(id) => console.log("like", id)}
           />
         </>

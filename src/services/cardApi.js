@@ -15,5 +15,5 @@ export const deleteCard = (cardId) => {
 };
 
 export const likeCard = (cardId) => {
-  return axios.put(`${BASE_URL}/cards/${cardId}/like`);
+  return axios.patch(`${BASE_URL}/cards/${cardId}/like`);
 };

@@ -151,8 +151,6 @@ function App() {
   return (
     <div className="App">
       <h1>The Debugging Trashcats Board</h1>
-      <NewBoardForm createNewBoard={createNewBoard} />
-
       <h2>Boards</h2>
       {boardsData.map((board) => (
         <Board
@@ -163,7 +161,7 @@ function App() {
           
         />
       ))}
-
+      <NewBoardForm createNewBoard={createNewBoard} />
       {selectedBoard && (
         <div className="selected-board">
           <h2>Selected Board</h2>

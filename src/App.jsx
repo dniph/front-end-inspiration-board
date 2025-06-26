@@ -1,15 +1,15 @@
 // src/App.jsx
 import { useEffect, useState } from "react";
-import { createBoard, getBoards } from "./services/boardAPI";
+import { createBoard, getBoards } from "./services/boardApi";
 import Board from "./components/Board";
 import "./App.css";
 import NewBoardForm from "./components/NewBoardForm";
 import CardList from "./components/CardList";
-import { createCard, getCardsByBoardId } from "./services/cardApi.js";
+import { createCard, getCardsByBoardId } from "./services/cardApi";
 import NewCardForm from "./components/NewCardForm";
 import { deleteCard } from "./services/cardApi";
 import { likeCard } from "./services/cardApi";
-import { deleteBoard } from "./services/boardAPI";
+import { deleteBoard } from "./services/boardApi";
 
 function App() {
   const [boardsData, setBoardsData] = useState([]);

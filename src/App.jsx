@@ -10,6 +10,7 @@ import NewCardForm from "./components/NewCardForm";
 import { deleteCard } from "./services/cardApi";
 import { likeCard } from "./services/cardApi";
 import { deleteBoard } from "./services/boardApi";
+import { dislikeCard } from "./services/cardApi";
 
 function App() {
   const [boardsData, setBoardsData] = useState([]);
@@ -48,6 +49,7 @@ function App() {
           card_id: card.id,
           message: card.card_message,
           likes_count: card.likes,
+          dislike_count: card.dislikes,
           board_id: card.board_id,
         }));
         setCards(mappedCards);
@@ -90,6 +92,7 @@ function App() {
           card_id: cardFromServer.id,
           message: cardFromServer.card_message,
           likes_count: cardFromServer.likes,
+          dislike_count: cardFromServer.dislikes,
           board_id: cardFromServer.board_id,
         };
 
@@ -148,6 +151,23 @@ function App() {
     });
 };
   
+  const handleDislikeCard = (cardId) => {
+    dislikeCard(cardId)
+      .then((response) => {
+        const updatedCards = cards.map((card) =>
+          card.card_id === cardId
+            ? {
+                ...card,
+                dislike_count: response.data.dislikes,
+              }
+            : card
+        );
+        setCards(updatedCards);
+      })
+      .catch((error) => {
+        console.error("Error adding dislike:", error);
+      });
+  };
   return (
     <div className="App">
       <h1>The Debugging Trashcats Board</h1>
@@ -178,6 +198,7 @@ function App() {
             cards={cards}
             onDelete={handleDeleteCard}
             onLike={handleLikeCard}
+            onDislike={handleDislikeCard}
             
           />
         </>

@@ -10,3 +10,7 @@ export const getBoards = () => {
 export const createBoard = (boardData) => {
     return axios.post(`${BASE_URL}/boards`, boardData);
 };
+
+export const deleteBoard = (boardId) => {
+    return axios.delete(`${BASE_URL}/boards/${boardId}`);
+};

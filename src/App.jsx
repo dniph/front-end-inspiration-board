@@ -7,6 +7,9 @@ import NewBoardForm from "./components/NewBoardForm";
 import CardList from "./components/CardList";
 import { createCard, getCardsByBoardId } from "./services/cardApi.js";
 import NewCardForm from "./components/NewCardForm";
+import { deleteCard } from "./services/cardApi";
+import { likeCard } from "./services/cardApi";
+import { deleteBoard } from "./services/boardAPI";
 
 function App() {
   const [boardsData, setBoardsData] = useState([]);
@@ -39,7 +42,6 @@ function App() {
 
   useEffect(() => {
     if (!selectedBoard) return;
-
     getCardsByBoardId(selectedBoard.board_id)
       .then((response) => {
         const mappedCards = response.data.map((card) => ({
@@ -64,7 +66,6 @@ function App() {
         console.error("Error creating board:", error);
       });
   }
-
   
   // const createNewCard = (newCardData) => {
   //   if (!selectedBoard) return;
@@ -99,9 +100,57 @@ function App() {
       });
   };
 
+  const handleDeleteCard = (cardId) => {
+  deleteCard(cardId)
+    .then(() => {
+      // Filtra la tarjeta eliminada del estado
+      const updatedCards = cards.filter((card) => card.card_id !== cardId);
+      setCards(updatedCards);
+    })
+    .catch((error) => {
+      console.error("Error deleting card:", error);
+    });
+};
+
+  const handleLikeCard = (cardId) => {
+  likeCard(cardId)
+    .then((response) => {
+      const updatedCards = cards.map((card) =>
+        card.card_id === cardId
+          ? {
+              ...card,
+              likes_count: response.data.likes,
+            }
+          : card
+      );
+      setCards(updatedCards);
+    })
+    .catch((error) => {
+      console.error("Error adding like:", error);
+    });
+};
+
+  const handleDeleteBoard = (boardId) => {
+  deleteBoard(boardId)
+    .then(() => {
+      // Filtra el board eliminado del estado
+      const updatedBoards = boardsData.filter((b) => b.board_id !== boardId);
+      setBoardsData(updatedBoards);
+
+      // Si era el tablero seleccionado, lo quitamos también
+      if (selectedBoard?.board_id === boardId) {
+        setSelectedBoard(null);
+        setCards([]);
+      }
+    })
+    .catch((error) => {
+      console.error("Error deleting board:", error);
+    });
+};
+  
   return (
     <div className="App">
-      <h1>Inspiration Board</h1>
+      <h1>The Debugging Trashcats Board</h1>
       <NewBoardForm createNewBoard={createNewBoard} />
 
       <h2>Boards</h2>
@@ -110,6 +159,8 @@ function App() {
           key={board.board_id}
           board={board}
           onBoardSelect={setSelectedBoard}
+          onDeleteBoard={handleDeleteBoard}
+          
         />
       ))}
 
@@ -127,8 +178,9 @@ function App() {
           <NewCardForm createNewCard={createNewCard} />
           <CardList
             cards={cards}
-            onDelete={(id) => console.log("delete", id)}
-            onLike={(id) => console.log("like", id)}
+            onDelete={handleDeleteCard}
+            onLike={handleLikeCard}
+            
           />
         </>
       )}

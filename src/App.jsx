@@ -4,7 +4,7 @@ import Board from "./components/Board";
 import "./App.css";
 import NewBoardForm from "./components/NewBoardForm";
 import CardList from "./components/CardList";
-import { createCard, getCardsByBoardId, deleteCard, likeCard } from "./services/cardApi";
+import { createCard, getCardsByBoardId, deleteCard, likeCard, dislikeCard } from "./services/cardApi";
 import NewCardForm from "./components/NewCardForm";
 
 function App() {
@@ -30,6 +30,7 @@ function App() {
           card_id: card.id,
           message: card.card_message,
           likes_count: card.likes,
+          dislike_count: card.dislikes,
           board_id: card.board_id,
         }));
         setCards(mappedCards);
@@ -59,6 +60,7 @@ function App() {
           card_id: cardFromServer.id,
           message: cardFromServer.card_message,
           likes_count: cardFromServer.likes,
+          dislike_count: cardFromServer.dislikes,
           board_id: cardFromServer.board_id,
         };
 
@@ -118,11 +120,27 @@ function App() {
     return cards;
   };
 
+
+  const handleDislikeCard = (cardId) => {
+    dislikeCard(cardId)
+      .then((response) => {
+        const updatedCards = cards.map((card) =>
+          card.card_id === cardId
+            ? {
+                ...card,
+                dislike_count: response.data.dislikes,
+              }
+            : card
+        );
+        setCards(updatedCards);
+      })
+      .catch((error) => {
+        console.error("Error adding dislike:", error);
+      });
+  };
   return (
     <div className="App">
       <h1>The Debugging Trashcats Board</h1>
-      <NewBoardForm createNewBoard={createNewBoard} />
-
       <h2>Boards</h2>
       {boardsData.map((board) => (
         <Board
@@ -132,7 +150,7 @@ function App() {
           onDeleteBoard={handleDeleteBoard}
         />
       ))}
-
+      <NewBoardForm createNewBoard={createNewBoard} />
       {selectedBoard && (
         <div className="selected-board">
           <h2>Selected Board</h2>
@@ -152,6 +170,7 @@ function App() {
             cards={getDisplayedCards()}
             onDelete={handleDeleteCard}
             onLike={handleLikeCard}
+            onDislike={handleDislikeCard}
           />
         </>
       )}

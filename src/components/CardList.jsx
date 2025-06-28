@@ -1,6 +1,6 @@
 import Card from "./Card";
 
-const CardList = ({ cards, onDelete, onLike}) => {
+const CardList = ({ cards, onDelete, onLike, onDislike}) => {
     return (
         <div className="card-list">
           {cards.map((card)=> (
@@ -9,6 +9,7 @@ const CardList = ({ cards, onDelete, onLike}) => {
               card = {card}
               onDelete = {onDelete}
               onLike = {onLike}
+              onDislike={onDislike}
             />
           ))}
         </div>

@@ -1,22 +1,17 @@
-// src/App.jsx
 import { useEffect, useState } from "react";
-import { createBoard, getBoards } from "./services/boardAPI";
+import { createBoard, getBoards, deleteBoard } from "./services/boardAPI";
 import Board from "./components/Board";
 import "./App.css";
 import NewBoardForm from "./components/NewBoardForm";
 import CardList from "./components/CardList";
-import { createCard, getCardsByBoardId } from "./services/cardApi.js";
+import { createCard, getCardsByBoardId, deleteCard, likeCard } from "./services/cardApi";
 import NewCardForm from "./components/NewCardForm";
-import { deleteCard } from "./services/cardApi";
-import { likeCard } from "./services/cardApi";
-import { deleteBoard } from "./services/boardAPI";
 
 function App() {
   const [boardsData, setBoardsData] = useState([]);
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [cards, setCards] = useState([]);
-
-
+  const [sortByLikes, setSortByLikes] = useState(false); 
   useEffect(() => {
     getBoards()
       .then((response) => {
@@ -26,19 +21,6 @@ function App() {
         console.error("Error fetching boards:", error);
       });
   }, []);
-
-
-  // useEffect(() => {
-  //   if (selectedBoard) {
-  //     getCardsByBoardId(selectedBoard.board_id)
-  //       .then((response) => {
-  //         setCards(response.data.cards);
-  //       })
-  //       .catch((error) => {
-  //         console.error("Failed to fetch cards:", error);
-  //       });
-  //   }
-  // }, [selectedBoard]);
 
   useEffect(() => {
     if (!selectedBoard) return;
@@ -66,19 +48,6 @@ function App() {
         console.error("Error creating board:", error);
       });
   }
-  
-  // const createNewCard = (newCardData) => {
-  //   if (!selectedBoard) return;
-
-  //   createCard(selectedBoard.board_id, newCardData)
-  //     .then((response) => {
-
-  //       setCards([...cards, response.data]);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Failed to create card:", error);
-  //     });
-  // };
 
   const createNewCard = (newCardData) => {
     if (!selectedBoard) return;
@@ -101,53 +70,54 @@ function App() {
   };
 
   const handleDeleteCard = (cardId) => {
-  deleteCard(cardId)
-    .then(() => {
-      // Filtra la tarjeta eliminada del estado
-      const updatedCards = cards.filter((card) => card.card_id !== cardId);
-      setCards(updatedCards);
-    })
-    .catch((error) => {
-      console.error("Error deleting card:", error);
-    });
-};
+    deleteCard(cardId)
+      .then(() => {
+        const updatedCards = cards.filter((card) => card.card_id !== cardId);
+        setCards(updatedCards);
+      })
+      .catch((error) => {
+        console.error("Error deleting card:", error);
+      });
+  };
 
   const handleLikeCard = (cardId) => {
-  likeCard(cardId)
-    .then((response) => {
-      const updatedCards = cards.map((card) =>
-        card.card_id === cardId
-          ? {
-              ...card,
-              likes_count: response.data.likes,
-            }
-          : card
-      );
-      setCards(updatedCards);
-    })
-    .catch((error) => {
-      console.error("Error adding like:", error);
-    });
-};
+    likeCard(cardId)
+      .then((response) => {
+        const updatedCards = cards.map((card) =>
+          card.card_id === cardId
+            ? { ...card, likes_count: response.data.likes }
+            : card
+        );
+        setCards(updatedCards);
+      })
+      .catch((error) => {
+        console.error("Error adding like:", error);
+      });
+  };
 
   const handleDeleteBoard = (boardId) => {
-  deleteBoard(boardId)
-    .then(() => {
-      // Filtra el board eliminado del estado
-      const updatedBoards = boardsData.filter((b) => b.board_id !== boardId);
-      setBoardsData(updatedBoards);
+    deleteBoard(boardId)
+      .then(() => {
+        const updatedBoards = boardsData.filter((b) => b.board_id !== boardId);
+        setBoardsData(updatedBoards);
 
-      // Si era el tablero seleccionado, lo quitamos también
-      if (selectedBoard?.board_id === boardId) {
-        setSelectedBoard(null);
-        setCards([]);
-      }
-    })
-    .catch((error) => {
-      console.error("Error deleting board:", error);
-    });
-};
-  
+        if (selectedBoard?.board_id === boardId) {
+          setSelectedBoard(null);
+          setCards([]);
+        }
+      })
+      .catch((error) => {
+        console.error("Error deleting board:", error);
+      });
+  };
+
+  const getDisplayedCards = () => {
+    if (sortByLikes) {
+      return [...cards].sort((a, b) => b.likes_count - a.likes_count);
+    }
+    return cards;
+  };
+
   return (
     <div className="App">
       <h1>The Debugging Trashcats Board</h1>
@@ -160,7 +130,6 @@ function App() {
           board={board}
           onBoardSelect={setSelectedBoard}
           onDeleteBoard={handleDeleteBoard}
-          
         />
       ))}
 
@@ -176,11 +145,13 @@ function App() {
       {selectedBoard && (
         <>
           <NewCardForm createNewCard={createNewCard} />
+          <button className="sort-button" onClick={() => setSortByLikes(!sortByLikes)}>
+            {sortByLikes ? "Unsort" : "Sort by Likes"}
+          </button>
           <CardList
-            cards={cards}
+            cards={getDisplayedCards()}
             onDelete={handleDeleteCard}
             onLike={handleLikeCard}
-            
           />
         </>
       )}
@@ -189,5 +160,3 @@ function App() {
 }
 
 export default App;
-
-

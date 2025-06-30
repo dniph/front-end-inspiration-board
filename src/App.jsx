@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createBoard, getBoards, deleteBoard } from "./services/boardAPI";
+import { createBoard, getBoards, deleteBoard } from "./services/boardApi";
 import Board from "./components/Board";
 import "./App.css";
 import NewBoardForm from "./components/NewBoardForm";

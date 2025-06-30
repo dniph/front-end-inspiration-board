@@ -12,6 +12,7 @@ function App() {
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [cards, setCards] = useState([]);
   const [sortByLikes, setSortByLikes] = useState(false); 
+  
   useEffect(() => {
     getBoards()
       .then((response) => {

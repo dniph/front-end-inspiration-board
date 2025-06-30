@@ -142,15 +142,19 @@ function App() {
     <div className="App">
       <h1>The Debugging Trashcats Board</h1>
       <h2>Boards</h2>
-      {boardsData.map((board) => (
-        <Board
-          key={board.board_id}
-          board={board}
-          onBoardSelect={setSelectedBoard}
-          onDeleteBoard={handleDeleteBoard}
-        />
-      ))}
-      <NewBoardForm createNewBoard={createNewBoard} />
+      <div className="boards-grid">
+        {boardsData.map((board) => (
+          <Board
+            key={board.board_id}
+            board={board}
+            onBoardSelect={setSelectedBoard}
+            onDeleteBoard={handleDeleteBoard}
+          />
+        ))}
+      </div>
+      <div className="new-board-form">
+        <NewBoardForm createNewBoard={createNewBoard} />
+      </div>
       {selectedBoard && (
         <div className="selected-board">
           <h2>Selected Board</h2>
@@ -166,12 +170,14 @@ function App() {
           <button className="sort-button" onClick={() => setSortByLikes(!sortByLikes)}>
             {sortByLikes ? "Unsort" : "Sort by Likes"}
           </button>
-          <CardList
-            cards={getDisplayedCards()}
-            onDelete={handleDeleteCard}
-            onLike={handleLikeCard}
-            onDislike={handleDislikeCard}
-          />
+          <div className="cards-grid">
+            <CardList
+              cards={getDisplayedCards()}
+              onDelete={handleDeleteCard}
+              onLike={handleLikeCard}
+              onDislike={handleDislikeCard}
+            />
+          </div>
         </>
       )}
     </div>

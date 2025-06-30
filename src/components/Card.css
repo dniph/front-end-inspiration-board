@@ -1,10 +1,13 @@
 .card {
+  width: 600px;
   border: 1px solid #ccc;
-  border-radius: 12px;
-  padding: 10px;
-  margin: 10px;
-  max-width: 300px;
-  background-color: #fefefe;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #fdfdfd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .card-actions {
@@ -12,3 +15,4 @@
   justify-content: space-between;
   margin-top: 8px;
 }
+
